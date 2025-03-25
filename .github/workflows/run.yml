@@ -33,4 +33,5 @@ jobs:
       - name: Start benchmark
         env:
           GITHUB_EVENT: ${{ toJson(github.event) }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: node index.js
