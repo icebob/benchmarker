@@ -5,7 +5,7 @@
       "assignee": null,
       "assignees": [],
       "author_association": "OWNER",
-      "body": "Body of first test.\n\n# Test 1\n```js\nconst s = \"John\" + \"Smith\";\n```\n\n# Test 2\n```js\nconst s = [\"John\", \"Smith\"].join(\" \");\n```",
+      "body": "Body of first test.\n\n# String concatenation\n\n## Concat 1\n```js\nconst s = \"John\" + \"Smith\";\n```\n\n## Concat 2\n```js\nconst s = [\"John\", \"Smith\"].join(\" \");\n```\n\nThat's all.",
       "closed_at": null,
       "comments": 0,
       "comments_url": "https://api.github.com/repos/icebob/benchmarker/issues/1/comments",
