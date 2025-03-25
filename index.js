@@ -63,8 +63,18 @@ function numToStr(num, digits = 2) {
 
         for (const test of suite.tests) {
             let name = test.name;
-            if (test.fastest) name += " (fastest)";
-            rows.push(`| ${name} | ${humanize.short(test.stat.avg * 1000)} | ${numToStr(test.stat.percent)}% | ${numToStr(test.stat.rps)} |`);
+            let cells = [
+                name,
+                humanize.short(test.stat.avg * 1000),
+                numToStr(test.stat.percent) + "%",
+                numToStr(test.stat.rps)
+            ];
+
+            if (test.fastest) {
+                cells = cells.map((cell) => `**${cell}**`);
+            }
+
+            rows.push("| " + cells.join(" | ") + " |");
         }      
 
         rows.push(`\n\n![${suite.name}](${suite.chartImage})`);
