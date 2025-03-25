@@ -4,14 +4,9 @@ on:
     types: [opened, edited]
 
 jobs:
-  dump_contexts_to_log:
+  benchmark:
     runs-on: ubuntu-latest
     steps:
-      - name: Dump GitHub context
-        env:
-          GITHUB_EVENT: ${{ toJson(github.event) }}
-        run: echo "$GITHUB_EVENT"
-
       - uses: actions/checkout@v4
   
       - name: Use Node.js 20.x

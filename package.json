@@ -4,7 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "issue:opened": "act -e ./test_events/issue_opened.json",
+    "issue:edited": "act -e ./test_events/issue_edited.json"
   },
   "keywords": [],
   "author": "",
