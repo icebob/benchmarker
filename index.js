@@ -19,7 +19,7 @@ const ast = parse(body);
 
 console.log("AST: ", ast);
 
-const benchmark = new Benchmarkify(`#${evt.issue.number} - ${evt.issue.title}`, { description: "This is a common benchmark", chartImage: true }).printHeader();
+const benchmark = new Benchmarkify(`${evt.issue.number} - ${evt.issue.title}`, { description: "This is a common benchmark", chartImage: true }).printHeader();
 
 const suites = [];
 
@@ -28,7 +28,7 @@ let testName;
 for (const node of ast.children) {
     if (node.type === "Header" && node.depth === 1) {
         // Create a test suite
-        suite = benchmark.createSuite(`#${evt.issue.number} - ${evt.issue.title}`, { time: 1000, description: "???" });
+        suite = benchmark.createSuite(node.children[0].value, { time: 1000, description: "" });
         suites.push(suite);
     }
 
@@ -67,7 +67,7 @@ function numToStr(num, digits = 2) {
                 name,
                 humanize.short(test.stat.avg * 1000),
                 numToStr(test.stat.percent) + "%",
-                numToStr(test.stat.rps)
+                numToStr(test.stat.rps, 0)
             ];
 
             if (test.fastest) {
