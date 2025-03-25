@@ -10,6 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "benchmarkify": "^4.0.0"
+    "benchmarkify": "^4.0.0",
+    "octocat": "^1.2.1"
   }
 }
