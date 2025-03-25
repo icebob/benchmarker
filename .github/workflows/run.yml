@@ -9,8 +9,8 @@ jobs:
     steps:
       - name: Dump GitHub context
         env:
-          GITHUB_CONTEXT: ${{ toJson(github.event) }}
-        run: echo "$GITHUB_CONTEXT"
+          GITHUB_EVENT: ${{ toJson(github.event) }}
+        run: echo "$GITHUB_EVENT"
 
       - uses: actions/checkout@v4
   
@@ -34,3 +34,8 @@ jobs:
   
       - name: Install dependencies
         run: npm ci
+  
+      - name: Start benchmark
+        env:
+          GITHUB_EVENT: ${{ toJson(github.event) }}
+        run: node index.js

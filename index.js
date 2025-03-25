@@ -1,0 +1,1 @@
+console.log("Github event: ", JSON.parse(process.env.GITHUB_EVENT));
