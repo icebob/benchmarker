@@ -121,7 +121,7 @@ async function saveComment(content) {
             let name = test.name;
             if (test.error) name += "Error: " + test.error;
             let cells = [
-                `${name.replace(/|/g, "\\|")}`,
+                `${name.replace(/\|/g, "\\|")}`,
                 test.stat.avg != null ? humanize.short(test.stat.avg * 1000) : "-",
                 test.stat.percent != null ? numToStr(test.stat.percent) + "%" : "-",
                 test.stat.rps != null ? numToStr(test.stat.rps, 0) : "-"
