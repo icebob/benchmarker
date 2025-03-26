@@ -50,7 +50,7 @@ function numToStr(num, digits = 2) {
 }
 
 (async () => {
-       await octokit.rest.issues.createReaction({
+       await octokit.rest.reactions.createForIssue({
         owner: evt.repository.owner.login,
         repo: evt.repository.name,
         issue_number: evt.issue.number,
