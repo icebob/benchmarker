@@ -3,6 +3,7 @@ const parse = require("@textlint/markdown-to-ast").parse;
 const humanize = require("tiny-human-time");
 const { Octokit } = require("octokit");
 const { inspect } = require("util");
+const os = require("os");
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
@@ -118,6 +119,17 @@ async function run() {
 		rows.push(`\n\n![${suite.name}](${suite.chartImage})`);
 
 		rows.push(`\n\n`);
+
+		// Runner info
+
+		rows.push(`-----`);
+		rows.push(`### Runner Info`);
+		rows.push(`- **Node.js**: ${process.versions.node}`);
+		rows.push(`- **V8**: ${process.versions.v8}`);
+		rows.push(`- **Platform**: ${os.type()} ${os.release()} ${os.arch()}`);
+		rows.push(`- **CPU**: ${os.cpus()[0].model} (${os.cpus().length} cores)`);
+		rows.push(`- **Date**: ${new Date().toISOString()}`);
+		rows.push(`- **Benchmarkify**: ${require("benchmarkify/package.json").version}`);
 	}
 
 	const resultText = rows.join("\n");
@@ -201,7 +213,7 @@ async function saveComment(content) {
 run().catch(err => {
 	console.error(err);
 	process.exit(1);
-}
+});
 
 /*
 
