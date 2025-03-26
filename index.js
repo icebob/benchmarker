@@ -54,7 +54,7 @@ async function addReaction(content) {
         owner: evt.repository.owner.login,
         repo: evt.repository.name,
         issue_number: evt.issue.number,
-        content: "rocket"
+        content
     });
 
     console.log("Add reaction response:", res);
@@ -64,7 +64,7 @@ async function addReaction(content) {
 
 (async () => {
        
-    addReaction("rocket");
+    await addReaction("rocket");
 
     const result = await benchmark.run(suites);
 
@@ -113,7 +113,7 @@ async function addReaction(content) {
         body: resultText
     });
 
-    addReaction("+1");
+    await addReaction("+1");
 
 })();
 
