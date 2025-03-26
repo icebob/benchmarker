@@ -49,14 +49,22 @@ function numToStr(num, digits = 2) {
     return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(num);
 }
 
-(async () => {
-       await octokit.rest.reactions.createForIssue({
+async function addReaction(content) {
+    const res = await octokit.rest.reactions.createForIssue({
         owner: evt.repository.owner.login,
         repo: evt.repository.name,
         issue_number: evt.issue.number,
         content: "rocket"
     });
 
+    console.log("Add reaction response:", res);
+
+    return res.id;
+}
+
+(async () => {
+       
+    addReaction("rocket");
 
     const result = await benchmark.run(suites);
 
@@ -104,6 +112,8 @@ function numToStr(num, digits = 2) {
         issue_number: evt.issue.number,
         body: resultText
     });
+
+    addReaction("+1");
 
 })();
 
