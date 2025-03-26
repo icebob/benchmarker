@@ -7,12 +7,13 @@ const { inspect } = require("util");
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 const evt = JSON.parse(process.env.GITHUB_EVENT);
-console.log("Github event: ", inspect(evt, { depth: 10, colors: false }));
+// console.log("Github event: ", inspect(evt, { depth: 10, colors: false }));
 
 const body = evt.issue?.body;
 
 if (!body) {
-    console.log("No body found");
+    console.log("Body not found");
+    process.exit(1);
     return;
 }
 
@@ -58,8 +59,6 @@ async function addReaction(content) {
         content
     });
 
-    console.log("Add reaction response:", res);
-
     return res.data.id;
 }
 
@@ -79,15 +78,26 @@ async function saveComment(content) {
         issue_number: evt.issue.number
     });
 
-    console.log("Add reaction response:", inspect(res, { depth: 10, colors: false }));
+    console.log("Comments:", inspect(res, { depth: 10, colors: false }));
 
-    // Post the result to the issue as comment
-    await await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
-        owner: evt.repository.owner.login,
-        repo: evt.repository.name,
-        issue_number: evt.issue.number,
-        body: content
-    });    
+    const lastCommentID = res.data.find(comment => comments.user?.login == "github-actions[bot]")?.id;
+
+    if (lastCommentID) {
+        await await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}/comments/{comment_id}", {
+            owner: evt.repository.owner.login,
+            repo: evt.repository.name,
+            issue_number: evt.issue.number,
+            comment_id: lastCommentID,
+            body: content
+        });    
+    } else {
+        await await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+            owner: evt.repository.owner.login,
+            repo: evt.repository.name,
+            issue_number: evt.issue.number,
+            body: content
+        });    
+    }
 }
 
 (async () => {
