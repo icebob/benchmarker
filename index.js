@@ -4,6 +4,7 @@ const humanize = require("tiny-human-time");
 const { Octokit } = require("octokit");
 const { inspect } = require("util");
 const os = require("os");
+var shell = require('shelljs');
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
@@ -31,6 +32,7 @@ async function run() {
 	const suites = [];
 	const setUps = [];
 	const tearDowns = [];
+	const requires = [];
 
 	const context = Object.create(null);
 
@@ -69,16 +71,25 @@ async function run() {
 		}
 
 		// Code block is the test case
-		if (node.type === "CodeBlock" && testName) {
+		if (node.type === "CodeBlock") {
 			const fn = new Function(node.value).bind(context);
 			if (isSetup) {
+				requires.push(...collectRequires(node.value));
 				setUps.push(fn);
 			} else if (isTearDown) {
 				tearDowns.push(fn);
-			} else {
+			} else if (testName) {
 				suite.add(testName, fn);
+			} else {
+				console.warn("Unknown code block: ", node);
 			}
 		}
+	}
+
+	for (const req of requires) {
+		console.log(`Installing '${req}'...`);
+		const res = shell.exec(`npm install ${req}`);
+		console.log(`Installed '${req}':`, res.stdout);
 	}
 
 	suite.setup(setUps);
@@ -208,6 +219,18 @@ async function saveComment(content) {
 			body: content
 		});
 	}
+}
+
+function collectRequires(content) {
+	console.log("Collecting requires from content: ", content);
+	const re = /require\(['"](.+?)['"]\)/g;
+	const res = [];
+	let match;
+	while ((match = re.exec(content))) {
+		res.push(match[1]);
+	}
+	console.log("Requires: ", res);
+	return res;
 }
 
 run().catch(err => {
