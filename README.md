@@ -6,7 +6,7 @@ It supports Javascript and Node.js.
 
 ## How it works
 
-1. Open an issue, use the "Benchmark" template
+1. [Open an issue, use the "Benchmark" template](https://github.com/icebob/benchmarker/issues/new?template=benchmark.md)
 2. Set the name of the benchmark test
 3. Copy the test case codes and setup, teardown codes.
 4. Save the issue and wait a few seconds. The Github Action will post the result as a comment.
