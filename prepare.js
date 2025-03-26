@@ -118,7 +118,7 @@ async function run() {
 
 	for (const [name, code] of tests) {
 		testFile.push(`// Test case: ${name}
-			suite_${suiteIndex}.add("${name}", async () => {
+			suite_${suiteIndex}.add("${name}", () => {
 				${code}
 			});
 		`);
