@@ -2,11 +2,12 @@ const Benchmarkify = require("benchmarkify");
 const parse = require("@textlint/markdown-to-ast").parse;
 const humanize = require("tiny-human-time");
 const {Octokit, App} = require("octokit");
+const { inspect } = require("util");
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 const evt = JSON.parse(process.env.GITHUB_EVENT);
-console.log("Github event: ", evt);
+console.log("Github event: ", inspect(evt, { depth: 10, colors: false }));
 
 const body = evt.issue?.body;
 
@@ -59,16 +60,25 @@ async function addReaction(content) {
 
     console.log("Add reaction response:", res);
 
-    return res.id;
+    return res.data.id;
+}
+
+async function deleteReaction(id) {
+    await octokit.rest.reactions.delete({
+        owner: evt.repository.owner.login,
+        repo: evt.repository.name,
+        issue_number: evt.issue.number,
+        id
+    });
 }
 
 (async () => {
        
-    await addReaction("rocket");
+    const reactionID = await addReaction("rocket");
 
     const result = await benchmark.run(suites);
 
-    console.log("Benchmark result: ", result);
+    console.log("Benchmark result: ", inspect(result, { depth: 10, colors: false }));
 
     const rows = [];
 
@@ -113,6 +123,7 @@ async function addReaction(content) {
         body: resultText
     });
 
+    await deleteReaction(reactionID);
     await addReaction("+1");
 
 })();
