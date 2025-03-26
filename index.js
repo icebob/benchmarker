@@ -26,9 +26,14 @@ console.log("AST: ", inspect(ast, { depth: 10, colors: false }));
 const benchmark = new Benchmarkify(`${evt.issue.number} - ${evt.issue.title}`, { description: "This is a common benchmark", chartImage: true }).printHeader();
 
 const suites = [];
+const setUps = [];
+const tearDowns = [];
+
+const context = Object.create(null);
 
 let suite;
 let testName;
+let isSetup, isTearDown;
 for (const node of ast.children) {
     if (node.type === "Header" && node.depth === 1) {
         // Create a test suite
@@ -37,14 +42,34 @@ for (const node of ast.children) {
     }
 
     if (node.type === "Header" && node.depth === 2) {
-        testName = node.children[0].value;
+        isSetup = false;
+        isTearDown = false;
+        testName = null;
+
+        const name = node.children[0].value.trim();
+        if (name.toLowerCase().startsWith("setup") || name.toLowerCase().startsWith("set up")) {
+            isSetup = true;
+        } else if (name.toLowerCase().startsWith("teardown") || name.toLowerCase().startsWith("tear down")) {
+            isTearDown = true;
+        } else {
+            testName = node.children[0].value;
+        }
     }
 
     if (node.type === "CodeBlock" && testName) {
-        const fn = new Function(node.value);
-        suite.add(testName, fn);
+        const fn = (new Function(node.value)).bind(context);
+        if (isSetup) {
+            setUps.push(fn);
+        else if (isTearDown) {
+            tearDowns.push(fn);
+        } else {
+            suite.add(testName, fn);
+        }
     }
 }
+
+suite.setup(setUps);
+suite.tearDown(tearDowns);
 
 function numToStr(num, digits = 2) {
     return new Intl.NumberFormat("en-US", { maximumFractionDigits: digits }).format(num);
