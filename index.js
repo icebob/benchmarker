@@ -63,12 +63,12 @@ async function addReaction(content) {
     return res.data.id;
 }
 
-async function deleteReaction(id) {
-    await octokit.rest.reactions.delete({
+async function deleteReaction(reaction_id) {
+    await octokit.request("DELETE /repos/{owner}/{repo}/issues/{issue_number}/reactions/{reaction_id}", {
         owner: evt.repository.owner.login,
         repo: evt.repository.name,
         issue_number: evt.issue.number,
-        id
+        reaction_id
     });
 }
 
