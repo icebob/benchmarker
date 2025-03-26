@@ -41,9 +41,8 @@ for (const node of ast.children) {
     }
 
     if (node.type === "CodeBlock" && testName) {
-        suite.add(testName, () => {
-            eval(node.value);
-        });
+        const fn = new Function(node.value);
+        suite.add(testName, fn);
     }
 }
 
