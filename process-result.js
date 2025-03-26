@@ -63,7 +63,7 @@ async function run() {
 	await saveComment(resultText);
 
 	// await deleteReaction(reactionID);
-	await addReaction("tocket");
+	await addReaction("rocket");
 
 }
 
