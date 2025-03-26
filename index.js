@@ -119,7 +119,7 @@ async function saveComment(content) {
 
         for (const test of suite.tests) {
             let name = test.name;
-            if (test.error) name += "Error: " + test.error;
+            if (test.error) name += " - ❌ Error: " + test.error;
             let cells = [
                 `${name.replace(/\|/g, "\\|")}`,
                 test.stat.avg != null ? humanize.short(test.stat.avg * 1000) : "-",
