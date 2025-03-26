@@ -48,6 +48,14 @@ function numToStr(num, digits = 2) {
 }
 
 (async () => {
+       await octokit.rest.issues.createReaction({
+        owner: evt.repository.owner.login,
+        repo: evt.repository.name,
+        issue_number: evt.issue.number,
+        content: "rocket"
+    });
+
+
     const result = await benchmark.run(suites);
 
     console.log("Benchmark result: ", result);
