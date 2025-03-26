@@ -4,8 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "issue:opened": "act -e ./test_events/issue_opened.json",
-    "issue:edited": "act -e ./test_events/issue_edited.json"
+    "issue:opened": "act -e ./test_events/issue_opened.json"
   },
   "keywords": [],
   "author": "",
