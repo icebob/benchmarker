@@ -83,10 +83,10 @@ async function saveComment(content) {
     const lastCommentID = res.data.find(comment => comment.user?.login == "github-actions[bot]")?.id;
 
     if (lastCommentID) {
-        await await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}/comments/{comment_id}", {
+        await await octokit.request("PATCH /repos/{owner}/{repo}/issues/comments/{comment_id}", {
             owner: evt.repository.owner.login,
             repo: evt.repository.name,
-            issue_number: evt.issue.number,
+            // issue_number: evt.issue.number,
             comment_id: lastCommentID,
             body: content
         });    
