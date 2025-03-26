@@ -80,7 +80,7 @@ async function saveComment(content) {
 
     console.log("Comments:", inspect(res, { depth: 10, colors: false }));
 
-    const lastCommentID = res.data.find(comment => comments.user?.login == "github-actions[bot]")?.id;
+    const lastCommentID = res.data.find(comment => comment.user?.login == "github-actions[bot]")?.id;
 
     if (lastCommentID) {
         await await octokit.request("PATCH /repos/{owner}/{repo}/issues/{issue_number}/comments/{comment_id}", {
