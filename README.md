@@ -73,6 +73,13 @@ Use h2 header with `Teardown` or `Tear down` text and add a code block with the 
     ```
 ```
 
+## Test result
+
+The Benchmarker generate a table and a chart from the test results.
+
+![image](https://github.com/user-attachments/assets/078addc7-9066-43d4-8112-9bdfe387e9df)
+
+
 ## License
 Benchmarker is available under the [MIT license](https://tldrlegal.com/license/mit-license).
 
