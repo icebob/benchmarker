@@ -3,6 +3,8 @@ const parse = require("@textlint/markdown-to-ast").parse;
 const humanize = require("tiny-human-time");
 const {Octokit, App} = require("octokit");
 
+const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
+
 const evt = JSON.parse(process.env.GITHUB_EVENT);
 console.log("Github event: ", evt);
 
@@ -94,8 +96,6 @@ function numToStr(num, digits = 2) {
     const resultText = rows.join("\n");
 
     console.log("Result text: ", resultText);
-
-    const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
     // Post the result to the issue as comment
     await octokit.rest.issues.createComment({
