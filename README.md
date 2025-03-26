@@ -1,6 +1,6 @@
 # Benchmarker
 
-Benchmarker is a benchmark runner based on Github Issues. Just create a new issue with the test case code blocks and Benchmarker Github Action workflow will execute the benchmark tests and post the results as a comment of the issue.
+Benchmarker is a benchmark runner based on Github Issues. Just create a new issue with the test case code blocks and Benchmarker Github Action workflow will execute the benchmark tests and post the results as a comment of the issue. [See how it looks!](https://github.com/icebob/benchmarker/issues/3)
 
 It supports Javascript and Node.js.
 
@@ -14,7 +14,7 @@ It supports Javascript and Node.js.
 
 ## Issue formats
 
-Open #3 to see how the benchmark test looks.
+Open [#3](https://github.com/icebob/benchmarker/issues/3) to see how the benchmark test looks.
 
 ### Name of the benchmark test
 
