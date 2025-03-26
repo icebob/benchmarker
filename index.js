@@ -60,7 +60,7 @@ for (const node of ast.children) {
         const fn = (new Function(node.value)).bind(context);
         if (isSetup) {
             setUps.push(fn);
-        else if (isTearDown) {
+        } else if (isTearDown) {
             tearDowns.push(fn);
         } else {
             suite.add(testName, fn);
