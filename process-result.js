@@ -1,105 +1,20 @@
-const Benchmarkify = require("benchmarkify");
-const parse = require("@textlint/markdown-to-ast").parse;
 const humanize = require("tiny-human-time");
 const { Octokit } = require("octokit");
-const { inspect } = require("util");
 const os = require("os");
-var shell = require('shelljs');
+const fs = require("fs");
 
 const octokit = new Octokit({ auth: process.env.GITHUB_TOKEN });
 
 const IS_ACT = !!process.env.ACT;
 const evt = JSON.parse(process.env.GITHUB_EVENT);
-// console.log("Github event: ", inspect(evt, { depth: 10, colors: false }));
 
 async function run() {
-	const body = evt.issue?.body;
-
-	if (!body) {
-		throw new Error("Issue body not found.");
+	if (!fs.existsSync("result.json")) {
+		throw new Error("Result file not found.");
 	}
 
-	const ast = parse(body);
-
-	console.log("AST: ", inspect(ast, { depth: 10, colors: false }));
-
-	const benchmark = new Benchmarkify(`${evt.issue.number} - ${evt.issue.title}`, {
-		description: "",
-		spinner: false,
-		chartImage: true
-	}).printHeader();
-
-	const suites = [];
-	const setUps = [];
-	const tearDowns = [];
-	const requires = [];
-
-	const context = Object.create(null);
-
-	let suite;
-	let testName;
-	let isSetup, isTearDown;
-	for (const node of ast.children) {
-
-		// H1 as Suite
-		if (node.type === "Header" && node.depth === 1) {
-			// Create a test suite
-			suite = benchmark.createSuite(node.children[0].value, {
-				time: 1000,
-				description: ""
-			});
-			suites.push(suite);
-		}
-
-		// H2 as test case ( or setup or teardown )
-		if (node.type === "Header" && node.depth === 2) {
-			isSetup = false;
-			isTearDown = false;
-			testName = null;
-
-			const name = node.children[0].value.trim();
-			if (name.toLowerCase().startsWith("setup") || name.toLowerCase().startsWith("set up")) {
-				isSetup = true;
-			} else if (
-				name.toLowerCase().startsWith("teardown") ||
-				name.toLowerCase().startsWith("tear down")
-			) {
-				isTearDown = true;
-			} else {
-				testName = node.children[0].value;
-			}
-		}
-
-		// Code block is the test case
-		if (node.type === "CodeBlock") {
-			const fn = new Function(node.value).bind(context);
-			if (isSetup) {
-				requires.push(...collectRequires(node.value));
-				setUps.push(fn);
-			} else if (isTearDown) {
-				tearDowns.push(fn);
-			} else if (testName) {
-				suite.add(testName, fn);
-			} else {
-				console.warn("Unknown code block: ", node);
-			}
-		}
-	}
-
-	for (const req of requires) {
-		console.log(`Installing '${req}'...`);
-		const res = shell.exec(`npm install ${req}`);
-		console.log(`Installed '${req}':`, res.stdout);
-	}
-
-	suite.setup(setUps);
-	suite.tearDown(tearDowns);
-
-	const reactionID = await addReaction("rocket");
-
-	const result = await benchmark.run(suites);
-
-	console.log("Benchmark result: ", inspect(result, { depth: 10, colors: false }));
+	const fc = fs.readFileSync("result.json", "utf8");
+	const result = JSON.parse(fc);
 
 	const rows = [];
 
@@ -147,9 +62,15 @@ async function run() {
 
 	await saveComment(resultText);
 
-	await deleteReaction(reactionID);
-	await addReaction("+1");
+	// await deleteReaction(reactionID);
+	await addReaction("tocket");
+
 }
+
+run().catch(err => {
+	console.error(err);
+	process.exit(1);
+});
 
 function numToStr(num, digits = 2) {
 	return new Intl.NumberFormat("en-US", {
@@ -220,33 +141,3 @@ async function saveComment(content) {
 		});
 	}
 }
-
-function collectRequires(content) {
-	console.log("Collecting requires from content: ", content);
-	const re = /require\(['"](.+?)['"]\)/g;
-	const res = [];
-	let match;
-	while ((match = re.exec(content))) {
-		res.push(match[1]);
-	}
-	console.log("Requires: ", res);
-	return res;
-}
-
-run().catch(err => {
-	console.error(err);
-	process.exit(1);
-});
-
-/*
-
-1. Parse markdown to get h1 and code blocks
-    https://github.com/textlint/textlint/tree/master/packages/%40textlint/markdown-to-ast
-
-2. Create eval functions from the code blocks
-
-3. Generate markdown result text with table and image URL
-
-4. Post the result to the issue as comment, or edit the existing result comment
-
-*/

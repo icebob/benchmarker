@@ -5,7 +5,7 @@
       "assignee": null,
       "assignees": [],
       "author_association": "OWNER",
-      "body": "Body of first test.\n\n# String concatenation\n\n## Setup\n\n```\nthis.uuid = require('uuid');\n```\n\n## Concat 1\n```js\nconst s = \"John\" + \"Smith\";\n```\n\n## Concat 2\n```js\nconst s = [\"John\", \"Smith\"].join(\" \");\n```\n\nThat's all.",
+      "body": "Body of first test.\n\n# String concatenation\n\n## Setup\n\n```\nconst uuid = require('uuid');\n```\n\n## v1\n```js\nreturn uuid.v1();\n```\n\n## v4\n```js\nreturn uuid.v4();\n```\n\n## Teardown\n\n```\nthis.uuid = null;\n```\n\nThat's all.",
       "closed_at": null,
       "comments": 0,
       "comments_url": "https://api.github.com/repos/icebob/benchmarker/issues/1/comments",
