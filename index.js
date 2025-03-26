@@ -20,7 +20,7 @@ console.log(`Issue #${evt.issue.number} - ${evt.issue.title}: ${body}`);
 
 const ast = parse(body);
 
-console.log("AST: ", ast);
+console.log("AST: ", inspect(ast, { depth: 10, colors: false }));
 
 const benchmark = new Benchmarkify(`${evt.issue.number} - ${evt.issue.title}`, { description: "This is a common benchmark", chartImage: true }).printHeader();
 
@@ -72,6 +72,24 @@ async function deleteReaction(reaction_id) {
     });
 }
 
+async function saveComment(content) {
+    const res = await octokit.request("GET /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+        owner: evt.repository.owner.login,
+        repo: evt.repository.name,
+        issue_number: evt.issue.number
+    });
+
+    console.log("Add reaction response:", inspect(res, { depth: 10, colors: false }));
+
+    // Post the result to the issue as comment
+    await await octokit.request("POST /repos/{owner}/{repo}/issues/{issue_number}/comments", {
+        owner: evt.repository.owner.login,
+        repo: evt.repository.name,
+        issue_number: evt.issue.number,
+        body: content
+    });    
+}
+
 (async () => {
        
     const reactionID = await addReaction("rocket");
@@ -115,13 +133,7 @@ async function deleteReaction(reaction_id) {
 
     console.log("Result text: ", resultText);
 
-    // Post the result to the issue as comment
-    await octokit.rest.issues.createComment({
-        owner: evt.repository.owner.login,
-        repo: evt.repository.name,
-        issue_number: evt.issue.number,
-        body: resultText
-    });
+    await saveComment(resultText);
 
     await deleteReaction(reactionID);
     await addReaction("+1");
