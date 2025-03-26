@@ -118,12 +118,13 @@ async function saveComment(content) {
         rows.push("| --- | ---:| ---:| ---:|");
 
         for (const test of suite.tests) {
-            let name = `"${test.name}"`;
+            let name = test.name;
+            if (test.error) name += "Error: " + test.error;
             let cells = [
-                name,
-                humanize.short(test.stat.avg * 1000),
-                numToStr(test.stat.percent) + "%",
-                numToStr(test.stat.rps, 0)
+                `"${name}"`,
+                test.stat.avg != null ? humanize.short(test.stat.avg * 1000) : "-",
+                test.stat.percent != null ? numToStr(test.stat.percent) + "%" : "-",
+                test.stat.rps != null ? numToStr(test.stat.rps, 0) : "-"
             ];
 
             if (test.fastest) {
