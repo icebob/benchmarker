@@ -67,7 +67,7 @@ async function run() {
 			testName = null;
 
 			const name = node.children[0].value.trim();
-			if (name.toLowerCase().startsWith("dependencies")) {
+			if (name.toLowerCase().startsWith("dependenc")) {
 				isDependencies = true;
 			} else if (name.toLowerCase().startsWith("setup") || name.toLowerCase().startsWith("set up")) {
 				isSetup = true;
@@ -98,7 +98,10 @@ async function run() {
 			if (isDependencies) {
 				for (const item of node.children) {
 					if (item.type === "ListItem") {
-						requires.push(item.children[0].raw);
+						const r = item.children?.[0]?.raw?.trim();
+						if (r) {
+							requires.push(item.children[0].raw);
+						}
 					}
 				}
 			}
@@ -154,33 +157,7 @@ async function run() {
 	}
 }
 
-
-function collectRequires(content) {
-	//console.log("Collecting requires from content: ", content);
-	const re = /require\(['"](.+?)['"]\)/g;
-	const res = [];
-	let match;
-	while ((match = re.exec(content))) {
-		res.push(match[1]);
-	}
-	//console.log("Requires: ", res);
-	return res;
-}
-
 run().catch(err => {
 	console.error(err);
 	process.exit(1);
 });
-
-/*
-
-1. Parse markdown to get h1 and code blocks
-    https://github.com/textlint/textlint/tree/master/packages/%40textlint/markdown-to-ast
-
-2. Create eval functions from the code blocks
-
-3. Generate markdown result text with table and image URL
-
-4. Post the result to the issue as comment, or edit the existing result comment
-
-*/
