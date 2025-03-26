@@ -118,7 +118,7 @@ async function saveComment(content) {
         rows.push("| --- | ---:| ---:| ---:|");
 
         for (const test of suite.tests) {
-            let name = test.name;
+            let name = `"${test.name}"`;
             let cells = [
                 name,
                 humanize.short(test.stat.avg * 1000),
