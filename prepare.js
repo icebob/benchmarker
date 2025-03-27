@@ -88,7 +88,7 @@ async function run() {
 			} else if (testName) {
 				testFile.push(`// Test case: ${testName}
 					suite_${suiteIndex}.add("${testName}", () => {
-						${code}
+						${node.value}
 					});
 				`);
 			} else {
