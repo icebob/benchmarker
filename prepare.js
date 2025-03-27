@@ -39,12 +39,8 @@ async function run() {
 
 	// --- Parse AST to create test suites
 
-	const setUps = [];
-	const tearDowns = [];
-	const tests = [];
 	const requires = [];
-
-	let suiteIndex = 1;
+	let suiteIndex = 0;
 	let testName;
 	let isSetup, isTearDown, isDependencies;
 	for (const node of ast.children) {
@@ -52,7 +48,7 @@ async function run() {
 		if (node.type === "Header" && node.depth === 1) {
 			// Create a test suite
 			testFile.push(`
-				const suite_${suiteIndex} = benchmark.createSuite("${node.children[0].value}", {
+				const suite_${++suiteIndex} = benchmark.createSuite("${node.children[0].value}", {
 					time: 1000,
 					description: ""
 				});
@@ -84,11 +80,17 @@ async function run() {
 		// Code block is the test case
 		if (node.type === "CodeBlock") {
 			if (isSetup) {
-				setUps.push(node.value);
+				testFile.push("// Setup");
+				testFile.push(node.value);
 			} else if (isTearDown) {
-				tearDowns.push(node.value);
+				testFile.push("// Teardown");
+				testFile.push(node.value);
 			} else if (testName) {
-				tests.push([testName, node.value]);
+				testFile.push(`// Test case: ${testName}
+					suite_${suiteIndex}.add("${testName}", () => {
+						${code}
+					});
+				`);
 			} else {
 				console.warn("Unknown code block: ", node);
 			}
@@ -105,29 +107,6 @@ async function run() {
 					}
 				}
 			}
-		}
-	}
-
-	if (setUps.length > 0) {
-		testFile.push("// Setup");
-		for (const setup of setUps) {
-			testFile.push(setup);
-		}
-		testFile.push("");
-	}
-
-	for (const [name, code] of tests) {
-		testFile.push(`// Test case: ${name}
-			suite_${suiteIndex}.add("${name}", () => {
-				${code}
-			});
-		`);
-	}
-
-	if (tearDowns.length > 0) {
-		testFile.push("// Tear down");
-		for (const tearDown of tearDowns) {
-			testFile.push(tearDown);
 		}
 	}
 
